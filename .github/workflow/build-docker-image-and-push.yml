@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags: "**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Extract Git tag
+        id: tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
+      - name: Build Docker Image
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          # Build the Docker image with a tag based on the commit hash
+          docker build -t KZweb/base:${TAG} .
+        working-directory: ./
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Push Docker Image
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          docker push KZweb/base:${TAG}
+        working-directory: ./
