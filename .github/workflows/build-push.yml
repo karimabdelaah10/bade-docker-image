@@ -20,7 +20,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t php8.3-fullstack:${{ env.TAG }} .
+          docker build -t  ${{ secrets.DOCKER_HUB_USERNAME }}/php8.3-fullstack:${{ env.TAG }} .
         working-directory: ./
 
       - name: Login to Docker Hub
@@ -31,5 +31,5 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker push php8.3-fullstack:${{ env.TAG }}
+          docker push  ${{ secrets.DOCKER_HUB_USERNAME }}/php8.3-fullstack:${{ env.TAG }}
         working-directory: ./
